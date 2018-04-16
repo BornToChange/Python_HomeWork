@@ -1,0 +1,26 @@
+print("Choose the converter:")
+print("F - from Celsius to Fahrenheit;")
+print("C - from Fahrenheit to Celsius;")
+print("K - from Miles to Kilometers;")
+print("M - from Kilometers to Miles;")
+
+choose = input("Your Choice:")
+
+if (choose == "F") or (choose == "f"):
+    degrees_C = input("Celsius degrees:")
+    degrees_F = int(degrees_C) * 1.8 +32
+    print("Fahrenheit degrees:" + str(degrees_F))
+elif (choose == "C") or (choose == "c"):
+    degrees_F = input("Fahrenheit degrees:")
+    degrees_C = (int(degrees_F) - 32) / 1.8
+    print("Celsius degrees:" + str(degrees_C))
+elif (choose == "K") or (choose == "k"):
+    miles = input("Miles:")
+    kilometers = int(miles) / 0.62137
+    print("Kilometers:" + str(kilometers))
+elif (choose == "M") or (choose == "m"):
+    kilometers = input("Kilometers:")
+    miles = int(kilometers) * 0.62137
+    print("Kilometers:" + str(miles))
+else:
+    print("Wrong input!")
