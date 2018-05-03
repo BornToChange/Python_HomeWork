@@ -1,0 +1,190 @@
+from datetime import datetime
+
+
+class vehicle(object):
+    def __init__(self, brand, model, year, km_done, service_date):
+        self.brand = brand
+        self.model = model
+        self.year = year
+        self.km_done = km_done
+        self.service_date = service_date
+
+    def full_name(self):
+        return self.brand + " " + self.model
+
+    def car_age(self):
+        age = datetime.now().year - int(self.year)
+        return age
+
+    def print_car_data(self):
+        car_data = str(self.brand + ", " + self.model + ", " + self.year + ", " +\
+                       self.km_done + ", " + self.service_date)
+        return car_data
+
+
+# ----------Main menu----------#
+def menu():
+    print()
+    print("\033[1;42m                Vehicle manager program                \033[1;m")
+    print("-------------------------------------------------------")
+    print("\033[1;42m[1]\033[1;m - View all vehicles")
+    print("\033[1;42m[2]\033[1;m - Edit km and the general service date")
+    print("\033[1;42m[3]\033[1;m - Add new vehicle")
+    print("\033[1;42m[4]\033[1;m - Delete vehicle")
+    print("\033[1;42m[5]\033[1;m - EXIT")
+    print("-------------------------------------------------------")
+    what_to_do = int(input("Enter your selection [1 - 5]:"))
+    while (what_to_do < 1) or (what_to_do > 5):
+        what_to_do = int(input("\033[1;31mWrong input!\033[1;m Enter your selection [1 - 5]:"))
+    else:
+        return what_to_do
+
+
+#----------Read car list from file----------#
+def read_from_file(file_name):
+    try:
+        list_of_cars = []
+        file_cars = open(file_name, "r", encoding="utf-8")
+        rows = file_cars.read().splitlines()
+        for row in rows:
+            car_data = row.split(":-:")
+            car = vehicle(car_data[0], car_data[1], car_data[2], car_data[3], car_data[4])
+            list_of_cars.append(car)
+        file_cars.close()
+        return list_of_cars
+    except IOError:
+        return []
+
+
+#----------Write car list to file----------#
+def write_to_file(file_name, list_of_cars):
+    if len(list_of_cars) > 0:
+        file_cars = open(file_name, "w+", encoding="utf-8")
+        for index, car in enumerate(list_of_cars):
+            car_row = "%s:-:%s:-:%s:-:%s:-:%s\n" % (car.brand, car.model, car.year, car.km_done, car.service_date)
+            file_cars.write(car_row)
+        file_cars.close()
+    return True
+
+
+#----------See a list of vehicles---------#
+def see_car_list(list_of_cars):
+    if len(list_of_cars) > 0:
+        print()
+        print("\033[1;42m                Vehicle manager program                \033[1;m")
+        print("\033[1;47m                   List of vehicles                    \033[1;m")
+        print("-------------------------------------------------------")
+        for index, car in enumerate(list_of_cars):
+            print("Nr: " + str(index + 1))
+            print("Brand: " + str(car.brand))
+            print("Model: " + str(car.model))
+            print("Year: " + str(car.year) + " (Car Age: " + str(car.car_age()) + ")")
+            print("Km so far: " + str(car.km_done))
+            print("Last service date: " + str(car.service_date))
+            print()
+    print("-------------------------------------------------------")
+    input("Press Enter to continue...")
+    if not list_of_cars:
+        print("You don't have any cars in your list.")
+    return True
+
+
+#----------Edit kilometers and the general service date for each vehicle----------#
+def edit_km_service_date(list_of_cars):
+    print()
+    print("\033[1;42m                Vehicle manager program                \033[1;m")
+    print("\033[1;47m         Edit km and the general service date          \033[1;m")
+    print("-------------------------------------------------------")
+    print("Cars in database:")
+    for index, car in enumerate(list_of_cars):
+        print("\033[1;42m[" + str(index+1) + "]\033[1;m " + car.full_name())
+    print("-------------------------------------------------------")
+    number = input("What car would you like to edit? (enter ID number): ")
+    id = int(number) - 1
+    if (id >= 0) and (int(number) <= len(list_of_cars)):
+        selected_car = list_of_cars[int(id)]
+        new_km_done = input("Please enter a new km data for %s: " % selected_car.full_name())
+        new_service_date = input("Please enter a new service date for %s: " % selected_car.full_name())
+        print("-------------------------------------------------------")
+        print("\033[1;42mOLD DATA:\033[1;m " + selected_car.print_car_data())
+        selected_car.km_done = new_km_done
+        selected_car.service_date = new_service_date
+        print("\033[1;42mNEW DATA:\033[1;m " + selected_car.print_car_data())
+        print("-------------------------------------------------------")
+        input("Press Enter to continue...")
+    else:
+        print("Wrong input!")
+    return True
+
+
+#----------Add new car to list----------#
+def add_new_vehicle(list_of_cars):
+    print()
+    print("\033[1;42m                Vehicle manager program                \033[1;m")
+    print("\033[1;47m                    Add new vehicle                    \033[1;m")
+    print("-------------------------------------------------------")
+    brand = input("Please enter car's brand name:")
+    model = input("Please enter car's model:")
+    year = input("Please enter car's year:")
+    km_done = input("Please enter car's kilometers done so far:")
+    service_date = input("Please enter car's general service date:")
+
+    new_car = vehicle(brand=brand, model=model, year=year, km_done=km_done, service_date=service_date)
+
+    list_of_cars.append(new_car)
+    print("-------------------------------------------------------")
+    print("\033[1;32m" + new_car.full_name() + " was successfully added to your car list.\033[1;m")
+    print("-------------------------------------------------------")
+    input("Press Enter to continue...")
+    return True
+
+
+#----------Delete vehicle----------#
+def delete_vehicle(list_of_cars):
+    print()
+    print("\033[1;42m                Vehicle manager program                \033[1;m")
+    print("\033[1;47m                     Delete vehicle                    \033[1;m")
+    print("-------------------------------------------------------")
+    print("Cars in database:")
+    for index, car in enumerate(list_of_cars):
+        print("\033[1;42m[" + str(index+1) + "]\033[1;m " + car.full_name())
+    print("-------------------------------------------------------")
+    number = input("What car would you like to delete? (enter ID number): ")
+    id = int(number) - 1
+    if (id >= 0) and (int(number) <= len(list_of_cars)):
+        selected_car = list_of_cars[int(id)]
+        y_or_n = ""
+        y_or_n = input("Do you want delete: " + selected_car.print_car_data() + "[Y/N]?")
+        if y_or_n.lower() == "y":
+            list_of_cars.remove(selected_car)
+            print("\033[1;31mCar deleted!\033[1;m")
+        elif y_or_n.lower() == "n":
+            print("\033[1;31mNo changes was made!\033[1;m")
+        else:
+            print("\033[1;31mWrong input!\033[1;m")
+    print("-------------------------------------------------------")
+    input("Press Enter to continue...")
+    return True
+
+#---------------------------------------#
+file_name = "cars.txt"
+list_of_cars = []
+list_of_cars = read_from_file(file_name)
+
+while True:
+    what_to_do = menu()
+    if what_to_do == 1:
+        see_car_list(list_of_cars)
+    elif what_to_do == 2:
+        edit_km_service_date(list_of_cars)
+        write_to_file(file_name, list_of_cars)
+    elif what_to_do == 3:
+        add_new_vehicle(list_of_cars)
+        write_to_file(file_name, list_of_cars)
+    elif what_to_do == 4:
+        delete_vehicle(list_of_cars)
+        write_to_file(file_name, list_of_cars)
+    elif what_to_do == 5:
+        print("-------------------------------------------------------")
+        print("Thank you for using Vehicle manager program. Goodbye!")
+        break
