@@ -1,0 +1,25 @@
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+
+print("------------------QUOTES------------------")
+subject = input("Enter the topic you are looking for:")
+url = "http://quotes.yourdictionary.com/theme/" + str(subject) + "/"
+
+try:
+    response = urlopen(url).read()
+except Exception as e:
+    import sys
+    print(e)
+    sys.exit()
+
+print("------------------------------------------")
+soup = BeautifulSoup(response, "html.parser")
+print(soup.html.head.title.string)
+print("------------------------------------------")
+
+for index, paragraph in enumerate(soup.findAll("p", attrs={"class": "quoteContent"})):
+    print(str(index + 1) + ") " + paragraph.string.lstrip())
+    for b, author in enumerate(soup.findAll("a", attrs={"class": "author_link_tag"})):
+        if b == index:
+            print("    -" + author.string.lstrip() + "-")
+            print()
